@@ -1,4 +1,4 @@
 # Talk-ScalablePersistenceLayersSpringDataJPA
-The code samples used in my talk "Building Fast and Scalable Persistence Layers with Spring Data JPA".
+The code samples used in my talks "Building Fast and Scalable Persistence Layers with Spring Data JPA" and "Spring Data JPA - Ja, das gibt's auch in schnell" (German version).
 
-You can download the slides at https://thorben-janssen.com/talkscalable-persistence-layers-spring-data-jpa/
+If you like this talk, you will love my courses and the live sessions in the Persistence Hub. Find out more at https://thorben-janssen.com/join-persistence-hub/
