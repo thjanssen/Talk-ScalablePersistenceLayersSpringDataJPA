@@ -40,15 +40,19 @@ public class TestDemo {
     private ChessPlayerController playerController;
 
     @Test
+    @Transactional
     public void findAll() {
         log.info("... findAll ...");
 
         List<ChessPlayer> players = playerRepo.findAll();
         assertThat(players.size()).isEqualTo(19);
         
-        ChessPlayer player = players.get(0);
-        log.info(player.getFirstName() + " " + player.getLastName()); 
+        players.forEach(player -> log.info(player.getFirstName() + " " 
+                                            + player.getLastName()+ " played in "
+                                            + player.getTournaments().size()+ " tournaments.")); 
     }
+
+
 
     @Test
     @Transactional
@@ -58,11 +62,12 @@ public class TestDemo {
         List<ChessPlayer> players = playerRepo.findWithTournamentsBy();
         assertThat(players.size()).isEqualTo(19);
         
-        for (ChessPlayer player : players) {
-            log.info(player.getFirstName() + " " + player.getLastName() 
-                        + " played in "+player.getTournaments().size()+" tournaments."); 
-        }
+        players.forEach(player -> log.info(player.getFirstName() + " " 
+                                            + player.getLastName() + " played in "
+                                            + player.getTournaments().size() + " tournaments.")); 
     }
+
+
 
     @Test
     @Transactional
@@ -75,6 +80,8 @@ public class TestDemo {
         
         tournament.getPlayers().remove(removedPlayer);
     }
+
+
 
     @Test
     public void getPlayerNamesDto() {
@@ -99,19 +106,11 @@ public class TestDemo {
         log.info("... getPlayerNamesDtoNative ...");
 
         try {
-            PlayerName player = playerRepo.findDtoNativeByFirstName("Magnus");
+            PlayerNameIntf player = playerRepo.findDtoNativeByFirstName("Magnus");
             log.info(player.getFirstName()+" "+player.getLastName());
         } catch (ConverterNotFoundException e) {
             log.error(e.toString());
         }
-    }
-
-    @Test
-    public void getPlayerNamesNative() {
-        log.info("... getPlayerNamesNative ...");
-
-        PlayerNameIntf player = playerRepo.findNativeByFirstName("Magnus");
-        log.info(player.getFirstName()+" "+player.getLastName());
     }
 
     @Test
@@ -141,11 +140,50 @@ public class TestDemo {
         log.info(player.getFullName());
     }
 
+
+
     @Test
     public void getPlayerUsingCache() {
         log.info("... getPlayerUsingCache ...");
 
         playerController.getPlayerById(1L);
         playerController.getPlayerById(1L);
+    }
+
+
+
+
+
+
+
+    
+    
+    
+    @Test
+    public void getPlayerNamesNative() {
+        log.info("... getPlayerNamesNative ...");
+
+        PlayerNameIntf player = playerRepo.findNativeByFirstName("Magnus");
+        log.info(player.getFirstName()+" "+player.getLastName());
+    }
+
+    @Test
+    @Transactional
+    public void readOnlyTransaction() {
+        log.info("... readOnlyTransaction ...");
+
+        Long start = System.currentTimeMillis();
+        for (int i=0; i<100; i++) {
+            ChessPlayer player = playerRepo.findPlayerById(1L);
+        }
+        Long end = System.currentTimeMillis();
+        log.info("Executed all read-write queries in "+(end-start)+"ms");
+
+        start = System.currentTimeMillis();
+        for (int i=0; i<100; i++) {
+            ChessPlayer player = playerRepo.findPlayerReadOnlyById(1L);
+        }
+        end = System.currentTimeMillis();
+        log.info("Executed all read-only queries in "+(end-start)+"ms");
     }
 }

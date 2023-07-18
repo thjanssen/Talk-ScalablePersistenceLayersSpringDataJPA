@@ -1,0 +1,24 @@
+version: '3.5'
+
+services:
+  postgres-sdj-perf:
+    container_name: postgres-sdj-perf
+    build: ./postgres/
+    ports:
+     - 5432:5432
+    environment:
+     - POSTGRES_USER=postgres
+     - POSTGRES_PASSWORD=postgres
+  
+  pgadmin-sdj-perf:
+    container_name: pgadmin-sdj-perf
+    build: ./pgadmin/
+    ports:
+      - 80:80
+    environment:
+        PGADMIN_DEFAULT_EMAIL: test@postgresql.org
+        PGADMIN_DEFAULT_PASSWORD: postgres
+    links:
+      - postgres-sdj-perf
+    logging:
+      driver: "none"
